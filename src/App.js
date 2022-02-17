@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 // Blockchain Imports 
+import { getBundleModule } from './helpers';
 // import { ethers } from 'ethers';
 
 // Custom Components
@@ -32,9 +33,7 @@ function App() {
         /*
          * Check if we are on the correct network verison
          */
-        console.log(ethereum);
         const networkVersion = await ethereum.request({ method: 'eth_chainId' });
-        console.log(networkVersion);
         if (networkVersion === '0x13881') { // 0x89 is Matic Mainnet, 0x13881 is Mumbai Testnet
           // console.log('Client connected to CORRECT Network Version: ' + networkVersion); // DEBUG
           setIsCorrectNetwork(true);
@@ -48,7 +47,7 @@ function App() {
          * Check if we're authorized to access the user's wallet
          */
         const accounts = await ethereum.request({ method: 'eth_accounts' });
-        console.log(accounts);
+        // console.log(accounts); // DEBUG
         /*
          * User can have multiple authorized accounts, we grab the first one if its there!
          */
@@ -96,6 +95,91 @@ function App() {
     setIsLoading(true);
     checkIfWalletIsConnected();
   }, []);
+
+  useEffect(() => {
+    /*
+    * The function we will call that interacts with out smart contract
+    */
+    const fetchNFTMetadata = async () => {
+      try {
+        // Address of the wallet to check NFT balance
+        const address = currentAccount;
+        // The token ID of the NFT you want to check the wallets balance of
+        const tokenId = "0"
+        const module = await getBundleModule()
+        console.log(module);
+        const balance = await module.balanceOf(address, tokenId);
+        console.log(balance);
+      } catch (error) {
+        console.log(error);
+      }
+      // // console.log('Checking for Character NFT on address:', currentAccount); // DEBUG
+      // const provider = new ethers.providers.Web3Provider(window.ethereum);
+      // const signer = provider.getSigner();
+      // const gameContract = new ethers.Contract(
+      //   CONTRACT_ADDRESS,
+      //   generationOmega, // myEpicGame.abi,
+      //   signer
+      // );
+
+      // try {
+      //   // const remainingTokens = await gameContract.remainingTokens()
+      //   // const mintedSoFar = 5000 - remainingTokens.toNumber()
+      //   const accountNFTs = []
+
+      //   // TEST STUFF
+      //   const balance = await gameContract.balanceOf(currentAccount)
+      //   for (let i = 0; i < balance; i++) {
+      //     const nftIndex = await gameContract.tokenOfOwnerByIndex(currentAccount, i)
+      //     const characterDataRaw = (await gameContract.tokenURI(nftIndex))
+      //     console.log( characterDataRaw );
+      //     if (characterDataRaw) {
+      //       // console.log('User has Character NFT #' + nftIndex); // DEBUG
+      //       const characterData = transformCharacterData(characterDataRaw, nftIndex)
+      //       accountNFTs.push(characterData)
+      //     } else {
+      //       // console.log('No character NFT found!'); // DEBUG
+      //     }  
+      //   }
+
+      //   // Looper
+      //   // for (let i = 0; i < mintedSoFar; i++) {
+      //   //   // const ownerAddress = await gameContract.ownerClaim(i)
+      //   //   // if ( currentAccount === ownerAddress){
+      //   //     const characterDataRaw = (await gameContract.tokenURI(i))
+      //   //     if (characterDataRaw) {
+      //   //       console.log('User has Character NFT #' + i);
+      //   //       const characterData = transformCharacterData(characterDataRaw)
+      //   //       accountNFTs.push(characterData)
+      //   //     } else {
+      //   //       console.log('No character NFT found!');
+      //   //     }       
+      //   //   // }
+      //   // }
+      //   setCharacterList(accountNFTs);
+      //   if (accountNFTs.length > 0){
+      //     setLocation("SelectCharacter")
+      //   }
+      //   else {
+      //     setLocation("MintCharacter")
+      //   }
+      // } catch (error) {
+      //   if (error.toString().includes("URI query for nonexistent token")){
+      //     console.log("CONTRACT ERROR: URI query for nonexistent token");
+      //   }
+      //   console.log("Full Error: " + error.toString()); // DEBUG
+      // }
+      setIsLoading(false);
+    };
+
+    /*
+    * We only want to run this, if we have a connected wallet
+    */
+    if (currentAccount) {
+      // console.log('CurrentAccount:', currentAccount); // DEBUG
+      fetchNFTMetadata();
+    }
+  }, [currentAccount]);
 
   // Render Methods
   const renderContent = () => {
