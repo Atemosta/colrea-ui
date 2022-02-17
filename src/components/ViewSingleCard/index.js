@@ -11,7 +11,7 @@ import { parseCardNFT } from '../../helpers';
 
 import './SelectCard.css';
 
-const ColreaCard = ({cardNFT, setLocation }) => {
+const ViewSingleCard = ({cardNFT, setLocation }) => {
 
   const card = parseCardNFT(cardNFT)
 
@@ -46,7 +46,7 @@ const ColreaCard = ({cardNFT, setLocation }) => {
             className="cta-button connect-wallet-button"
             onClick={() => beginYourJourney()}
           >
-            Get More Details
+            Begin Your Journey
           </button>
             </div>
           </div>
@@ -55,4 +55,4 @@ const ColreaCard = ({cardNFT, setLocation }) => {
     )
 }
 
-export default ColreaCard
+export default ViewSingleCard

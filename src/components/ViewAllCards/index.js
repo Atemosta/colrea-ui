@@ -11,7 +11,7 @@ const ViewAllCards = ({ cardList, setLocation }) => {
 
   return (
     <div className="arena-container">
-      <h2>Your Colrea Cards</h2>
+      <h2>Your Contact Cards</h2>
       {/* Character NFT */}
       <Grid container justifycontent="center" spacing={4}>
         {cardList.map((cardNFT, i) => (

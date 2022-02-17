@@ -29,6 +29,7 @@ export function convertBalanceHexToInt(hexNumber) {
 
 export function parseCardNFT(cardNFT) {
   const metadata = cardNFT.metadata
+  console.log(metadata.properties);
   const card = {
     balance: convertBalanceHexToInt(cardNFT.ownedByAddress["_hex"]),
     bio: metadata.description,
