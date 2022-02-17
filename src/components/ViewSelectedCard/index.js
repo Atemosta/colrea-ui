@@ -11,9 +11,10 @@ import { parseCardNFT } from '../../helpers';
 
 import './SelectCard.css';
 
-const ViewSingleCard = ({cardNFT, setLocation }) => {
+const ViewSelectedCard = ({card, setLocation}) => {
 
-  const card = parseCardNFT(cardNFT)
+  console.log("hewwo world");
+  console.log(card);
 
   const beginYourJourney = () => {
     // console.log(characterNFT);
@@ -55,4 +56,4 @@ const ViewSingleCard = ({cardNFT, setLocation }) => {
     )
 }
 
-export default ViewSingleCard
+export default ViewSelectedCard

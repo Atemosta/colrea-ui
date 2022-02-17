@@ -1,24 +1,19 @@
 // React Imports
 import React from 'react'
 
-// External Imports
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
-
 // Internal Imports
-import { BUNDLE_MODULE_ADDRESS } from '../../constants';
 import { parseCardNFT } from '../../helpers';
 
 import './SelectCard.css';
 
-const ColreaCard = ({cardNFT, setLocation }) => {
+const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
 
   const card = parseCardNFT(cardNFT)
 
-  const beginYourJourney = () => {
-    // console.log(characterNFT);
-    // setLocation("ExploreWasteland")
-    // setCharacterNFT(characterNFT)
+  const getMoreDetails = (card) => {
+    console.log(card);
+    setSelectedCard(card)
+    setLocation("ViewSelectedCard")
   }
 
     return (
@@ -30,7 +25,7 @@ const ColreaCard = ({cardNFT, setLocation }) => {
               <img
                 // src={characterNFT.imageURI}
                 src={`${card.image}`}
-                alt={`${card.name} Image`}
+                alt={`${card.name}`}
               />
             <br/>
             <h3>
@@ -44,7 +39,7 @@ const ColreaCard = ({cardNFT, setLocation }) => {
             </Link> */}
           <button
             className="cta-button connect-wallet-button"
-            onClick={() => beginYourJourney()}
+            onClick={() => getMoreDetails(card)}
           >
             Get More Details
           </button>

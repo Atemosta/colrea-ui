@@ -7,7 +7,7 @@ import ColreaCard from './ColreaCard';
 /*
  * We pass in our characterNFT metadata so we can a cool card in our UI
  */
-const ViewAllCards = ({ cardList, setLocation }) => {
+const ViewAllCards = ({ cardList, setSelectedCard, setLocation }) => {
 
   return (
     <div className="arena-container">
@@ -16,7 +16,7 @@ const ViewAllCards = ({ cardList, setLocation }) => {
       <Grid container justifycontent="center" spacing={4}>
         {cardList.map((cardNFT, i) => (
           <Grid key={i} item xs={12} sm={6} md={4} lg={3}>
-          <ColreaCard cardNFT={cardNFT} setLocation={setLocation} />
+          <ColreaCard cardNFT={cardNFT} setSelectedCard={setSelectedCard} setLocation={setLocation} />
           </Grid>
         ))}
       </Grid>

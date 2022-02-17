@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 // Blockchain Imports 
-import { getBundleModule} from './helpers';
+import { getBundleModule } from './helpers';
 // import { ethers } from 'ethers';
 
 // Custom Components
 import LoadingIndicator from './components/LoadingIndicator';
 import ViewAllCards from './components/ViewAllCards';
+import ViewSelectedCard from './components/ViewSelectedCard';
 
 // Constants
 import twitterLogo from './assets/twitter-logo.svg';
@@ -20,6 +21,7 @@ function App() {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [location, setLocation] = useState(null);
   const [cardList, setCardList] = useState([]);
+  const [selectedCard, setSelectedCard] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const checkIfWalletIsConnected = async () => {
@@ -173,18 +175,17 @@ function App() {
       );
     }
     /*
-    * Scenario #2: Connected Wallet but no Player NFT
+    * Scenario #2: View All Collected Contact Cards
     */
     else if (location === "ViewAllCards") {
-        return <ViewAllCards cardList={cardList} setLocation={setLocation}  />;
+        return <ViewAllCards cardList={cardList} setSelectedCard={setSelectedCard} setLocation={setLocation} />;
     }
-    // /*
-    // * Scenario #3: If there is a connected wallet and list of characters and NO selected charaters,
-    // * show your list of characters to select!
-    // */
-    // else if (location === "SelectCharacter") {
-    //   return <SelectCharacter characterList={characterList} setCharacterNFT={setCharacterNFT} setLocation={setLocation}  />;
-    // }
+    /*
+    * Scenario #3: Display Selected Contact Card
+    */
+    else if (location === "ViewSelectedCard") {
+      return <ViewSelectedCard selectedCard={selectedCard} setLocation={setLocation} />;
+    }
     // /*
     // * Scenario #4: If there is a connected wallet and selected characterNFT, it's time to battle!
     // */
