@@ -104,12 +104,13 @@ function App() {
       try {
         // Address of the wallet to check NFT balance
         const address = currentAccount;
+        console.log(address);
         // The token ID of the NFT you want to check the wallets balance of
         const tokenId = "0"
         const module = await getBundleModule()
-        console.log(module);
         const balance = await module.balanceOf(address, tokenId);
-        console.log(balance);
+        const hexNumber = balance["_hex"]
+        const balanceInt = parseInt(hexNumber, 16);
       } catch (error) {
         console.log(error);
       }
