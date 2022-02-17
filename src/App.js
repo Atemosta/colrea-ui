@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 // Blockchain Imports 
-import { getBundleModule } from './helpers';
+import { getBundleModule} from './helpers';
 // import { ethers } from 'ethers';
 
 // Custom Components
 import LoadingIndicator from './components/LoadingIndicator';
+import ViewAllCards from './components/ViewAllCards';
 
 // Constants
 import twitterLogo from './assets/twitter-logo.svg';
@@ -17,7 +18,8 @@ function App() {
   // State
   const [isCorrectNetwork, setIsCorrectNetwork] = useState(null);
   const [currentAccount, setCurrentAccount] = useState(null);
-  // const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [cardList, setCardList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const checkIfWalletIsConnected = async () => {
@@ -101,75 +103,21 @@ function App() {
     * The function we will call that interacts with out smart contract
     */
     const fetchNFTMetadata = async () => {
+
       try {
         // Address of the wallet to check NFT balance
-        const address = currentAccount;
-        console.log(address);
-        // The token ID of the NFT you want to check the wallets balance of
-        const tokenId = "0"
         const module = await getBundleModule()
-        const balance = await module.balanceOf(address, tokenId);
-        const hexNumber = balance["_hex"]
-        const balanceInt = parseInt(hexNumber, 16);
+
+        // Or you can get optionally get the NFTs owned by a specific wallet
+        const address = currentAccount; // The address you want to get the NFTs for;
+        const ownedNfts = await module.getAll(address);
+        setCardList(ownedNfts);
+        setLocation("ViewAllCards")
+
       } catch (error) {
         console.log(error);
       }
-      // // console.log('Checking for Character NFT on address:', currentAccount); // DEBUG
-      // const provider = new ethers.providers.Web3Provider(window.ethereum);
-      // const signer = provider.getSigner();
-      // const gameContract = new ethers.Contract(
-      //   CONTRACT_ADDRESS,
-      //   generationOmega, // myEpicGame.abi,
-      //   signer
-      // );
 
-      // try {
-      //   // const remainingTokens = await gameContract.remainingTokens()
-      //   // const mintedSoFar = 5000 - remainingTokens.toNumber()
-      //   const accountNFTs = []
-
-      //   // TEST STUFF
-      //   const balance = await gameContract.balanceOf(currentAccount)
-      //   for (let i = 0; i < balance; i++) {
-      //     const nftIndex = await gameContract.tokenOfOwnerByIndex(currentAccount, i)
-      //     const characterDataRaw = (await gameContract.tokenURI(nftIndex))
-      //     console.log( characterDataRaw );
-      //     if (characterDataRaw) {
-      //       // console.log('User has Character NFT #' + nftIndex); // DEBUG
-      //       const characterData = transformCharacterData(characterDataRaw, nftIndex)
-      //       accountNFTs.push(characterData)
-      //     } else {
-      //       // console.log('No character NFT found!'); // DEBUG
-      //     }  
-      //   }
-
-      //   // Looper
-      //   // for (let i = 0; i < mintedSoFar; i++) {
-      //   //   // const ownerAddress = await gameContract.ownerClaim(i)
-      //   //   // if ( currentAccount === ownerAddress){
-      //   //     const characterDataRaw = (await gameContract.tokenURI(i))
-      //   //     if (characterDataRaw) {
-      //   //       console.log('User has Character NFT #' + i);
-      //   //       const characterData = transformCharacterData(characterDataRaw)
-      //   //       accountNFTs.push(characterData)
-      //   //     } else {
-      //   //       console.log('No character NFT found!');
-      //   //     }       
-      //   //   // }
-      //   // }
-      //   setCharacterList(accountNFTs);
-      //   if (accountNFTs.length > 0){
-      //     setLocation("SelectCharacter")
-      //   }
-      //   else {
-      //     setLocation("MintCharacter")
-      //   }
-      // } catch (error) {
-      //   if (error.toString().includes("URI query for nonexistent token")){
-      //     console.log("CONTRACT ERROR: URI query for nonexistent token");
-      //   }
-      //   console.log("Full Error: " + error.toString()); // DEBUG
-      // }
       setIsLoading(false);
     };
 
@@ -224,12 +172,12 @@ function App() {
         </div>
       );
     }
-    // /*
-    // * Scenario #2: Connected Wallet but no Player NFT
-    // */
-    // else if (location === "MintCharacter") {
-    //     return <MintCharacter setLocation={setLocation} />;
-    // }
+    /*
+    * Scenario #2: Connected Wallet but no Player NFT
+    */
+    else if (location === "ViewAllCards") {
+        return <ViewAllCards cardList={cardList} setLocation={setLocation}  />;
+    }
     // /*
     // * Scenario #3: If there is a connected wallet and list of characters and NO selected charaters,
     // * show your list of characters to select!
