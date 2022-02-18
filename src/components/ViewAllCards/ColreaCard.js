@@ -56,7 +56,8 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
         const tokenId = card.id
         const amount = transferAmount
         const module = await getBundleModule()
-        await module.transfer(toAddress, tokenId, amount);
+        const transferPromise = await module.transfer(toAddress, tokenId, amount);
+        console.log(transferPromise);
         setTransferStatus("success")
       } catch (error) {
         console.log(error);
@@ -107,7 +108,7 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
             className="cta-button connect-wallet-button"
             onClick={() => handleClickOpen(card)}
           >
-            Transfer Card
+            Transfer Card (QTY: {card.balance})
           </button>
             </div>
           </div>
@@ -118,7 +119,7 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
             <TextField
               autoFocus
               id="name"
-              label="Wallet Address"
+              label="Wallet Address (0x123...)"
               fullWidth
               margin="dense"
               onChange={event => setTransferAddress(event.target.value)}
