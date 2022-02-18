@@ -45,15 +45,15 @@ const ViewSelectedCard = ({selectedCard, setSelectedCard, setLocation}) => {
               color="inherit" 
               className="cta-button connect-wallet-button"
             >
-              View on OpenSea
+              View Metadata on OpenSea
             </Link>
             <h3>
               {card.bio}
             </h3>
             { websiteProperty && <h4> Website: <Link href={websiteProperty} > {websiteProperty} </Link> </h4>}
-            { emailProperty && <h4> Email: {emailProperty} </h4>}
-            { telegramProperty && <h4> Telegram: {telegramProperty} </h4>}
-            { discordProperty && <h4> Discord: {discordProperty} </h4>}
+            { emailProperty && <h4> Email: <Link href="https://protonmail.com/" > {emailProperty} </Link> </h4>}
+            { telegramProperty && <h4> Telegram: <Link href="https://telegram.org/" > {telegramProperty} </Link> </h4>}
+            { discordProperty && <h4> Discord: <Link href="https://discord.com/" > {discordProperty} </Link> </h4>}
             { twitterProperty && <h4> Twitter: <Link href={twitterProperty} > {twitterProperty} </Link> </h4>}
             { instagramProperty && <h4> Instagram: <Link href={instagramProperty} > {instagramProperty} </Link> </h4>}
             { githubProperty && <h4> GitHub: <Link href={githubProperty} > {githubProperty} </Link> </h4>}
