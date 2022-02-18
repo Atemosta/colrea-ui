@@ -107,10 +107,7 @@ function App() {
     const fetchNFTMetadata = async () => {
 
       try {
-        // Address of the wallet to check NFT balance
         const module = await getBundleModule()
-
-        // Or you can get optionally get the NFTs owned by a specific wallet
         const address = currentAccount; // The address you want to get the NFTs for;
         const ownedNfts = await module.getAll(address);
         setCardList(ownedNfts);

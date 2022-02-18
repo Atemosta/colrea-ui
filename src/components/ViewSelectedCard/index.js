@@ -38,7 +38,7 @@ const ViewSelectedCard = ({selectedCard, setSelectedCard, setLocation}) => {
               <img
                 // src={characterNFT.imageURI}
                 src={`${card.image}`}
-                alt={`${card.name} Image`}
+                alt={`${card.name}`}
               />
             <br/>
             <Link href={`https://testnets.opensea.io/assets/mumbai/${BUNDLE_MODULE_ADDRESS}/${card.id}`} 

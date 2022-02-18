@@ -11,9 +11,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 
-
 // Internal Imports
-import { parseCardNFT } from '../../helpers';
+import { getBundleModule, parseCardNFT } from '../../helpers';
 
 import './SelectCard.css';
 
@@ -26,24 +25,21 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
   const [open, setOpen] = React.useState(false);
   const [transferAmount, setTransferAmount] = React.useState(null);
   const [transferStatus, setTransferStatus] = React.useState(null);
-  const [walletAddress, setWalletAddress] = React.useState(null);
+  const [transferAddress, setTransferAddress] = React.useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  
   const handleClose = () => {
     setTransferAmount(null)
     setTransferStatus(null)
-    setWalletAddress(null)
+    setTransferAddress(null)
     setOpen(false);
   };
 
-  const transferCards = () => {
-    console.log(walletAddress)
-    console.log(transferAmount)
-     if (!walletAddress){
+  async function transferCards() {
+     if (!transferAddress){
       setTransferStatus("error")
       setAlertMessage("Missing Wallet Address")
     } else if (!transferAmount){
@@ -52,16 +48,26 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
     } else if (parseInt(transferAmount) > parseInt(card.balance)){
       setTransferStatus("error")
       setAlertMessage("Not enough cards to transfer - please mint or receive more. ")
-    } else if (walletAddress && transferAmount){
-      setTransferStatus("sending")
+    } else if (transferAddress && transferAmount){
       // do thirdweb stuff here lol
-      // "Failed to send contact cards - please try again."
+      try {
+        setTransferStatus("sending")
+        const toAddress = transferAddress
+        const tokenId = card.id
+        const amount = transferAmount
+        const module = await getBundleModule()
+        await module.transfer(toAddress, tokenId, amount);
+        setTransferStatus("success")
+      } catch (error) {
+        console.log(error);
+        setTransferStatus("error")
+        setAlertMessage("Failed to send contact cards - please try again.")
+      }  
       // handleClose()
     }
-
-
   }
 
+  // Open ViewSelectedCard Component
   const getMoreDetails = (card) => {
     console.log(card);
     setSelectedCard(card)
@@ -115,7 +121,7 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
               label="Wallet Address"
               fullWidth
               margin="dense"
-              onChange={event => setWalletAddress(event.target.value)}
+              onChange={event => setTransferAddress(event.target.value)}
               variant="outlined"
               type="text"
             />
