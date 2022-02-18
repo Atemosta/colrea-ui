@@ -2,28 +2,35 @@
 import React from 'react'
 
 // External Imports
-import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 
 // Internal Imports
 import { BUNDLE_MODULE_ADDRESS } from '../../constants';
-import { parseCardNFT } from '../../helpers';
+import { checkIfPropertyExists } from '../../helpers';
 
 import './SelectCard.css';
 
-const ViewSelectedCard = ({card, setLocation}) => {
+const ViewSelectedCard = ({selectedCard, setSelectedCard, setLocation}) => {
 
-  console.log("hewwo world");
-  console.log(card);
+  const card = selectedCard
+  const properties = card.properties
 
-  const beginYourJourney = () => {
-    // console.log(characterNFT);
-    // setLocation("ExploreWasteland")
-    // setCharacterNFT(characterNFT)
+  // Get List of Properties
+  const websiteProperty = checkIfPropertyExists("website", properties)
+  const emailProperty = checkIfPropertyExists("email", properties)
+  const telegramProperty = checkIfPropertyExists("telegram", properties)
+  const discordProperty = checkIfPropertyExists("discord", properties)
+  const twitterProperty = checkIfPropertyExists("twitter", properties)
+  const instagramProperty = checkIfPropertyExists("instagram", properties)
+  const githubProperty = checkIfPropertyExists("github", properties)
+
+  const returnToHome = () => {
+    setLocation("ViewAllCards")
+    setSelectedCard([])
   }
 
     return (
-      <div >
+      <div className="arena-container">
         <div className="players-container">
           <div className="player">
             <div className="image-content">
@@ -34,20 +41,27 @@ const ViewSelectedCard = ({card, setLocation}) => {
                 alt={`${card.name} Image`}
               />
             <br/>
-            <h3>
-              {card.bio}
-            </h3>
-            {/* <Link href={`https://testnets.opensea.io/assets/mumbai/${BUNDLE_MODULE_ADDRESS}/${card.id}`} 
+            <Link href={`https://testnets.opensea.io/assets/mumbai/${BUNDLE_MODULE_ADDRESS}/${card.id}`} 
               color="inherit" 
               className="cta-button connect-wallet-button"
             >
               View on OpenSea
-            </Link> */}
+            </Link>
+            <h3>
+              {card.bio}
+            </h3>
+            { websiteProperty && <h4> Website: <Link href={websiteProperty} > {websiteProperty} </Link> </h4>}
+            { emailProperty && <h4> Email: {emailProperty} </h4>}
+            { telegramProperty && <h4> Telegram: {telegramProperty} </h4>}
+            { discordProperty && <h4> Discord: {discordProperty} </h4>}
+            { twitterProperty && <h4> Twitter: <Link href={twitterProperty} > {twitterProperty} </Link> </h4>}
+            { instagramProperty && <h4> Instagram: <Link href={instagramProperty} > {instagramProperty} </Link> </h4>}
+            { githubProperty && <h4> GitHub: <Link href={githubProperty} > {githubProperty} </Link> </h4>}
           <button
             className="cta-button connect-wallet-button"
-            onClick={() => beginYourJourney()}
+            onClick={() => returnToHome()}
           >
-            Begin Your Journey
+            Return to Home
           </button>
             </div>
           </div>

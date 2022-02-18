@@ -8,6 +8,7 @@
   }
   
   .arena-container .boss-container {
+    padding: 15px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -98,6 +99,7 @@
     padding: 10px;
     border-radius: 10px;
     background-color: gray;
+    width: 400px;
   }
   
   .player .image-content img {

@@ -184,7 +184,7 @@ function App() {
     * Scenario #3: Display Selected Contact Card
     */
     else if (location === "ViewSelectedCard") {
-      return <ViewSelectedCard selectedCard={selectedCard} setLocation={setLocation} />;
+      return <ViewSelectedCard selectedCard={selectedCard} setSelectedCard={setSelectedCard} setLocation={setLocation} />;
     }
     // /*
     // * Scenario #4: If there is a connected wallet and selected characterNFT, it's time to battle!
