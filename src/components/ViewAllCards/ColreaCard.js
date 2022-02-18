@@ -2,13 +2,15 @@
 import React from 'react'
 
 // External Imports
+import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+
 
 // Internal Imports
 import { parseCardNFT } from '../../helpers';
@@ -16,12 +18,15 @@ import { parseCardNFT } from '../../helpers';
 import './SelectCard.css';
 
 const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
-  // State 
+  // Get Card Metadata
   const card = parseCardNFT(cardNFT)
-  const [open, setOpen] = React.useState(false);
-  const [walletAddress, setWalletAddress] = React.useState(false);
-  const [transferAmount, setTransferAmount] = React.useState(false);
 
+  // State 
+  const [alertMessage, setAlertMessage] = React.useState(null);
+  const [open, setOpen] = React.useState(false);
+  const [transferAmount, setTransferAmount] = React.useState(null);
+  const [transferStatus, setTransferStatus] = React.useState(null);
+  const [walletAddress, setWalletAddress] = React.useState(null);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -29,15 +34,32 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
 
   
   const handleClose = () => {
+    setTransferAmount(null)
+    setTransferStatus(null)
+    setWalletAddress(null)
     setOpen(false);
   };
 
   const transferCards = () => {
     console.log(walletAddress)
     console.log(transferAmount)
-    handleClose()
-    // setSelectedCard(card)
-    // setLocation("ViewSelectedCard")
+     if (!walletAddress){
+      setTransferStatus("error")
+      setAlertMessage("Missing Wallet Address")
+    } else if (!transferAmount){
+      setTransferStatus("error")
+      setAlertMessage("Missing Transfer Amount")
+    } else if (parseInt(transferAmount) > parseInt(card.balance)){
+      setTransferStatus("error")
+      setAlertMessage("Not enough cards to transfer - please mint or receive more. ")
+    } else if (walletAddress && transferAmount){
+      setTransferStatus("sending")
+      // do thirdweb stuff here lol
+      // "Failed to send contact cards - please try again."
+      // handleClose()
+    }
+
+
   }
 
   const getMoreDetails = (card) => {
@@ -94,7 +116,6 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
               fullWidth
               margin="dense"
               onChange={event => setWalletAddress(event.target.value)}
-              required
               variant="outlined"
               type="text"
             />
@@ -105,7 +126,6 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
               id="quantity"
               label={`Quantity: ${card.balance}`}
               onChange={event => setTransferAmount(event.target.value)}
-              required
               type="number"
               variant="outlined"
             />
@@ -114,10 +134,16 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
             <Button onClick={handleClose} color="secondary">
               Cancel
             </Button>
-            <Button onClick={transferCards} color="primary">
+            {
+              (transferStatus === "sending") ?
+              <CircularProgress /> : 
+              <Button onClick={transferCards} color="primary">
               Transfer
-            </Button>
+              </Button>
+            }
           </DialogActions>
+          { (transferStatus === "success") && <Alert onClose={handleClose} severity="success">Successfully sent contact cards!</Alert>}
+          { (transferStatus === "error") && <Alert onClose={handleClose} severity="error">{alertMessage}</Alert>}
         </Dialog>
       </div>
     )
