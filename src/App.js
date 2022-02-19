@@ -7,6 +7,7 @@ import { getBundleModule } from './helpers';
 
 // Custom Components
 import LoadingIndicator from './components/LoadingIndicator';
+import MintCard from './components/MintCard';
 import ViewAllCards from './components/ViewAllCards';
 import ViewSelectedCard from './components/ViewSelectedCard';
 
@@ -183,12 +184,12 @@ function App() {
     else if (location === "ViewSelectedCard") {
       return <ViewSelectedCard selectedCard={selectedCard} setSelectedCard={setSelectedCard} setLocation={setLocation} />;
     }
-    // /*
-    // * Scenario #4: If there is a connected wallet and selected characterNFT, it's time to battle!
-    // */
-    // else if (location === "ExploreWasteland") {
-    //     return <ExploreWasteland characterNFT={characterNFT} setLocation={setLocation} />;
-    // }
+    /*
+    * Scenario #4: Mint New Card!
+    */
+    else if (location === "MintCard") {
+        return <MintCard  setLocation={setLocation} />;
+    }
   };
 
   return (

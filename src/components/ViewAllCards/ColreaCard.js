@@ -70,7 +70,7 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
 
   // Open ViewSelectedCard Component
   const getMoreDetails = (card) => {
-    console.log(card);
+    // console.log(card); // DEBUG
     setSelectedCard(card)
     setLocation("ViewSelectedCard")
   }

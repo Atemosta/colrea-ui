@@ -2,15 +2,23 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import ColreaCard from './ColreaCard';
 
-// import LoadingIndicator from '../LoadingIndicator';
 
-/*
- * We pass in our characterNFT metadata so we can a cool card in our UI
- */
 const ViewAllCards = ({ cardList, setSelectedCard, setLocation }) => {
+
+  // Open ViewSelectedCard Component
+  const mintCard = () => {
+    setLocation("MintCard")
+  }
 
   return (
     <div className="arena-container">
+      <br/>
+      <button
+        className="cta-button connect-wallet-button"
+        onClick={() => mintCard()}
+      >
+        Mint a New Colrea Card
+      </button>
       <h2>Your Contact Cards</h2>
       {/* Character NFT */}
       <Grid container justifycontent="center" spacing={4}>
