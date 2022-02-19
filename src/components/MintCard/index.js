@@ -81,10 +81,14 @@ const MintCard = ({currentAccount, setLocation}) => {
   }
 
   const createMetadata = () => {
+
     const metadata = {
       name: name,
       description: bio,
-      image: Buffer.from(mintImage,'base64')
+      // image: mintImage,
+      // image: Buffer.from(mintImage, ),
+      // image: fs.readFileSync(mintImage)
+      image: 'ipfs/' + mintImage,
     }
 
     const properties = {}
@@ -280,7 +284,7 @@ const MintCard = ({currentAccount, setLocation}) => {
             <div className={classes.root}>
               <ImageList rowHeight={350} className={classes.imageList}>
                 {itemData.map((item) => (
-                  <ImageListItem key={item.img} onClick={() => onImageClick(item.img, item.title)}>
+                  <ImageListItem key={item.img} onClick={() => onImageClick(item.ipfs, item.title)}>
                     <img src={item.img} alt={item.title} />
                     <ImageListItemBar
                       title={item.title}
@@ -289,13 +293,11 @@ const MintCard = ({currentAccount, setLocation}) => {
                 ))}
               </ImageList>
             </div>
-            <br/>
 
             <Grid item xs={12}>
-                <h3>Image Selected: <i>{mintTitle}</i></h3>
-              </Grid>
+              <h3>Image Selected: <i>{mintTitle}</i></h3>
+            </Grid>
 
-            <br/>
             {
               (mintStatus === "minting") ?
               <CircularProgress /> : 
