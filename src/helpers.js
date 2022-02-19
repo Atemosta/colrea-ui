@@ -47,9 +47,12 @@ export function parseCardNFT(cardNFT) {
 }
 
 export function checkIfPropertyExists(name, properties) {
-  if (name in properties){
-    return properties[name]
-  } else {
+  if (properties) {
+    if (name in properties){
+      return properties[name]
+    } 
+  }
+  else {
     return false
   }
 }

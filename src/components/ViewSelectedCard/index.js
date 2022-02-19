@@ -11,7 +11,7 @@ import { checkIfPropertyExists } from '../../helpers';
 import './SelectCard.css';
 
 const ViewSelectedCard = ({selectedCard, setSelectedCard, setLocation}) => {
-
+  // State
   const card = selectedCard
   const properties = card.properties
 

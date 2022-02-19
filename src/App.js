@@ -198,7 +198,7 @@ function App() {
     * Scenario #4: Mint New Card!
     */
     else if (location === "MintCard") {
-        return <MintCard currentAccount={currentAccount} setLocation={setLocation} />;
+        return <MintCard currentAccount={currentAccount} selectedCard={selectedCard} setSelectedCard={setSelectedCard} setLocation={setLocation} />;
     }
   };
 

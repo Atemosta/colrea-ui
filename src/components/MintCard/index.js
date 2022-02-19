@@ -2,7 +2,6 @@ import React from 'react';
 
 // External Imports
 import Alert from '@material-ui/lab/Alert';
-import {Buffer} from 'buffer';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -18,7 +17,7 @@ import itemData from './itemData';
 
 // Internal Imports
 import { MINT_QUANTITY } from '../../constants';
-import { getBundleModule } from '../../helpers';
+import { getBundleModule, parseCardNFT} from '../../helpers';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,7 +50,7 @@ const darkTheme = createTheme({
   },
 });
 
-const MintCard = ({currentAccount, setLocation}) => {
+const MintCard = ({currentAccount, setSelectedCard, setLocation}) => {
 
   // State 
   const [name, setName] = React.useState(null);
@@ -128,7 +127,7 @@ const MintCard = ({currentAccount, setLocation}) => {
         }
 
         // Mint Cards
-        setAlertMessage("Attempting to mint your Colrea Cards...");
+        setAlertMessage("Minting your Colrea Cards...");
         const module = await getBundleModule()
         const mintPromise = await module.createAndMint(metadataWithSupply);
         console.log(mintPromise);
@@ -141,6 +140,11 @@ const MintCard = ({currentAccount, setLocation}) => {
         const transferPromise = await module.transfer(toAddress, tokenId, amount);
         console.log(transferPromise);
         setMintStatus("success")
+
+        // Show Created Cards
+        setSelectedCard(parseCardNFT(mintPromise))
+        setLocation('ViewSelectedCard')
+        
       } catch (error) {
         console.log(error);
         setMintStatus("error")
