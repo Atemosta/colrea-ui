@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 
 // Blockchain Imports 
-import { getBundleModule } from './helpers';
+import { convertBalanceHexToInt, getBundleModule } from './helpers';
 // import { ethers } from 'ethers';
 
 // Custom Components
@@ -110,7 +110,17 @@ function App() {
       try {
         const module = await getBundleModule()
         const address = currentAccount; // The address you want to get the NFTs for;
-        const ownedNfts = await module.getAll(address);
+        const allNFTs = await module.getAll(address);
+        const totalNFTs = allNFTs.length
+        const ownedNfts = []
+        for (let i = 0; i < totalNFTs; i++) {
+          const currentNFT = allNFTs[i]
+          const ownedByAdressHex = currentNFT.ownedByAddress["_hex"]
+          const ownedByAddressInt = convertBalanceHexToInt(ownedByAdressHex)
+          if (ownedByAddressInt > 0){
+            ownedNfts.push(currentNFT)
+          }
+        }        
         setCardList(ownedNfts);
         setLocation("ViewAllCards")
 

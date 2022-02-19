@@ -17,6 +17,7 @@ import ImageListItemBar from '@material-ui/core/ImageListItemBar';
 import itemData from './itemData';
 
 // Internal Imports
+import { MINT_QUANTITY } from '../../constants';
 import { getBundleModule } from '../../helpers';
 
 const useStyles = makeStyles((theme) => ({
@@ -116,20 +117,29 @@ const MintCard = ({currentAccount, setLocation}) => {
     } else if (name && bio){
       // do thirdweb stuff here lol
       try {
-        setMintStatus("minting")
 
+        // Create Card Metadata for Minting
+        setMintStatus("minting")
         const metadata = createMetadata()
         console.log(metadata);
-
         const metadataWithSupply = {
           metadata,
-          supply: 100, // The number of this NFT you want to mint
+          supply: MINT_QUANTITY, // The number of this NFT you want to mint
         }
 
-        console.log("Attempting to Mint Your Colrea Cards");
+        // Mint Cards
+        setAlertMessage("Attempting to mint your Colrea Cards...");
         const module = await getBundleModule()
         const mintPromise = await module.createAndMint(metadataWithSupply);
         console.log(mintPromise);
+        setAlertMessage(`Successfully minted cards. Now transferring to ${currentAccount}...`);
+
+        // Transfer NFTs to Connected Account
+        const toAddress = currentAccount
+        const tokenId = mintPromise.metadata.id
+        const amount = MINT_QUANTITY
+        const transferPromise = await module.transfer(toAddress, tokenId, amount);
+        console.log(transferPromise);
         setMintStatus("success")
       } catch (error) {
         console.log(error);
@@ -308,7 +318,8 @@ const MintCard = ({currentAccount, setLocation}) => {
             <br/>
             <br/>
             { (mintStatus === "success") && <Alert onClose={() => setMintStatus(null)} severity="success" variant="filled">Successfully minted Colrea Cards to <b>{currentAccount}</b>!</Alert>}
-            { (mintStatus === "error") && <Alert onClose={() => setMintStatus(null)} severity="error" variant="filled">{alertMessage}</Alert>}
+            { (mintStatus === "minting") && <Alert onClose={() => setMintStatus(null)} severity="info" variant="filled">{alertMessage}</Alert>}
+            { (mintStatus === "error")   && <Alert onClose={() => setMintStatus(null)} severity="error" variant="filled">{alertMessage}</Alert>}
           </Card>
         </ThemeProvider>
       </div>
