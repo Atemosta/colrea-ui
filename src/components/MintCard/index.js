@@ -85,10 +85,7 @@ const MintCard = ({currentAccount, setLocation}) => {
     const metadata = {
       name: name,
       description: bio,
-      // image: mintImage,
-      // image: Buffer.from(mintImage, ),
-      // image: fs.readFileSync(mintImage)
-      image: 'ipfs/' + mintImage,
+      image: mintImage,
     }
 
     const properties = {}
