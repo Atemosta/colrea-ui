@@ -2,7 +2,9 @@ import React from 'react';
 
 
 // External Imports
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
+import cyan from '@material-ui/core/colors/cyan';
 import { createTheme, makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -14,17 +16,17 @@ const useStyles = makeStyles((theme) => ({
   //   flexWrap: 'wrap',
   // },
   card: {
-    width: '150ch',
+    width: '100ch',
   },
   textField: {
-    // marginLeft: theme.spacing(20),
-    // marginRight: theme.spacing(10),
-    width: '70ch',
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
   },
 }));
 
 const darkTheme = createTheme({
   palette: {
+    primary: cyan,
     type: 'dark',
   },
 });
@@ -39,12 +41,13 @@ const MintCard = ({setLocation}) => {
   return (
     <div className="arena-container">
       <br/>
-      <button
-      className="cta-button connect-wallet-button"
+      <Button 
+      variant="contained" 
+      color="primary" 
       onClick={() => returnToHome()}
       >
-        {"Return to Home"}
-      </button>
+        {"← Return to Home"}
+      </Button>
       <br/>
       <div>
         <ThemeProvider theme={darkTheme}>
@@ -158,6 +161,16 @@ const MintCard = ({setLocation}) => {
               </Grid>
 
             </Grid>
+            <br/>
+            <br/>
+            <button
+            className="cta-button connect-wallet-button"
+            onClick={() => console.log("Pizza Time")}
+            >
+               Mint Colrea Card
+            </button>
+            <br/>
+            <br/>
           </Card>
         </ThemeProvider>
       </div>
