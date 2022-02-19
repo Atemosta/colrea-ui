@@ -80,18 +80,28 @@ const MintCard = ({currentAccount, setLocation}) => {
     setMintTitle(title)
   }
 
-  async function mintNewCard() {
+  const createMetadata = () => {
+    const metadata = {
+      name: name,
+      description: bio,
+      image: Buffer.from(mintImage,'base64')
+    }
 
-    // console.log(name)
-    // console.log(bio)
-    // console.log(website)
-    // console.log(email)
-    // console.log(telegram)
-    // console.log(discord)
-    // console.log(twitter)
-    // console.log(instagram)
-    // console.log(github)
-    // console.log(linktree)
+    const properties = {}
+    if (website) { properties["website"] = website}
+    if (email) { properties["email"] = email}
+    if (telegram) { properties["telegram"] = telegram}
+    if (discord) { properties["discord"] = discord}
+    if (twitter) { properties["twitter"] = twitter}
+    if (instagram) { properties["instagram"] = instagram}
+    if (github) { properties["github"] = github}
+    if (linktree) { properties["linktree"] = linktree}
+    metadata["properties"] = properties
+    
+    return metadata
+  }
+
+  async function mintNewCard() {
 
     if (!name){
       setMintStatus("error")
@@ -105,19 +115,17 @@ const MintCard = ({currentAccount, setLocation}) => {
     } else if (name && bio){
       // do thirdweb stuff here lol
       try {
-        setMintStatus("sending")
+        setMintStatus("minting")
 
-        const metadata = {
-          name: name,
-          description: bio,
-          image: Buffer.from(mintImage,'base64')
-        }
+        const metadata = createMetadata()
+        console.log(metadata);
 
         const metadataWithSupply = {
           metadata,
-          supply: 1, // The number of this NFT you want to mint
+          supply: 100, // The number of this NFT you want to mint
         }
 
+        console.log("Attempting to Mint Your Colrea Cards");
         const module = await getBundleModule()
         const mintPromise = await module.createAndMint(metadataWithSupply);
         console.log(mintPromise);
@@ -289,7 +297,7 @@ const MintCard = ({currentAccount, setLocation}) => {
 
             <br/>
             {
-              (mintStatus === "sending") ?
+              (mintStatus === "minting") ?
               <CircularProgress /> : 
               <button
                 className="cta-button connect-wallet-button"
