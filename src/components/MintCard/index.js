@@ -4,6 +4,7 @@ import React from 'react';
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import cyan from '@material-ui/core/colors/cyan';
 import { createTheme, makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -80,17 +81,53 @@ const MintCard = ({currentAccount, setLocation}) => {
 
   async function mintNewCard() {
 
-    console.log(name)
-    console.log(bio)
-    console.log(website)
-    console.log(email)
-    console.log(telegram)
-    console.log(discord)
-    console.log(twitter)
-    console.log(instagram)
-    console.log(github)
-    console.log(linktree)
-    console.log(itemData);
+    // console.log(name)
+    // console.log(bio)
+    // console.log(website)
+    // console.log(email)
+    // console.log(telegram)
+    // console.log(discord)
+    // console.log(twitter)
+    // console.log(instagram)
+    // console.log(github)
+    // console.log(linktree)
+
+    if (!name){
+      setMintStatus("error")
+      setAlertMessage("Missing Name")
+    } else if (!bio){
+      setMintStatus("error")
+      setAlertMessage("Missing Bio")
+    } else if (!mintImage){
+      setMintStatus("error")
+      setAlertMessage("No Image Selected")
+    } else if (name && bio){
+      // do thirdweb stuff here lol
+      try {
+        setMintStatus("sending")
+
+        const metadata = {
+          name: name,
+          description: bio,
+          image: mintImage
+        }
+
+        const metadataWithSupply = {
+          metadata,
+          supply: 1, // The number of this NFT you want to mint
+        }
+
+        const module = await getBundleModule()
+        const mintPromise = await module.createAndMint(metadataWithSupply);
+        console.log(mintPromise);
+        setMintStatus("success")
+      } catch (error) {
+        console.log(error);
+        setMintStatus("error")
+        setAlertMessage("Failed to mint contact cards - please try again.")
+      }  
+      // handleClose()
+    }
   }
 
   return (
@@ -250,12 +287,16 @@ const MintCard = ({currentAccount, setLocation}) => {
               </Grid>
 
             <br/>
-            <button
-            className="cta-button connect-wallet-button"
-            onClick={() => mintNewCard()}
-            >
+            {
+              (mintStatus === "sending") ?
+              <CircularProgress /> : 
+              <button
+                className="cta-button connect-wallet-button"
+                onClick={() => mintNewCard()}
+              >
                Mint Colrea Card
-            </button>
+              </button>
+            }
             <br/>
             <br/>
             { (mintStatus === "success") && <Alert onClose={() => setMintStatus(null)} severity="success" variant="filled">Successfully minted Colrea Cards to <b>{currentAccount}</b>!</Alert>}
