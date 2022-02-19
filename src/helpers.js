@@ -1,3 +1,7 @@
+// Bypass
+// @ts-ignore
+import { Buffer as NodeBuffer } from 'buffer';
+
 // Library Imports
 import { ethers } from 'ethers';
 import { ThirdwebSDK } from "@3rdweb/sdk";
@@ -11,6 +15,8 @@ if (!walletPrivateKey) {
   console.error("Wallet private key missing")
   process.exit(1)
 }
+
+window.Buffer = window.Buffer || NodeBuffer;
 
 export async function getBundleModule() {
   const provider = new ethers.Wallet(

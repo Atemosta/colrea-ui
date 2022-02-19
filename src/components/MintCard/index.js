@@ -2,6 +2,7 @@ import React from 'react';
 
 // External Imports
 import Alert from '@material-ui/lab/Alert';
+import {Buffer} from 'buffer';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -109,7 +110,7 @@ const MintCard = ({currentAccount, setLocation}) => {
         const metadata = {
           name: name,
           description: bio,
-          image: mintImage
+          image: Buffer.from(mintImage,'base64')
         }
 
         const metadataWithSupply = {

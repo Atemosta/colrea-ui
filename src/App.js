@@ -13,7 +13,7 @@ import ViewSelectedCard from './components/ViewSelectedCard';
 
 // Constants
 import twitterLogo from './assets/twitter-logo.svg';
-const TWITTER_HANDLE = 'ColreaATOS';
+const TWITTER_HANDLE = 'Atemosta';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 function App() {
