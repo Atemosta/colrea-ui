@@ -23,6 +23,7 @@ const ViewSelectedCard = ({selectedCard, setSelectedCard, setLocation}) => {
   const twitterProperty = checkIfPropertyExists("twitter", properties)
   const instagramProperty = checkIfPropertyExists("instagram", properties)
   const githubProperty = checkIfPropertyExists("github", properties)
+  const linktreeProperty = checkIfPropertyExists("linktree", properties)
 
   const returnToHome = () => {
     setLocation("ViewAllCards")
@@ -57,6 +58,8 @@ const ViewSelectedCard = ({selectedCard, setSelectedCard, setLocation}) => {
             { twitterProperty && <h4> Twitter: <Link href={twitterProperty} > {twitterProperty} </Link> </h4>}
             { instagramProperty && <h4> Instagram: <Link href={instagramProperty} > {instagramProperty} </Link> </h4>}
             { githubProperty && <h4> GitHub: <Link href={githubProperty} > {githubProperty} </Link> </h4>}
+            { linktreeProperty && <h4> GitHub: <Link href={linktreeProperty} > {linktreeProperty} </Link> </h4>}
+
           <button
             className="cta-button connect-wallet-button"
             onClick={() => returnToHome()}
