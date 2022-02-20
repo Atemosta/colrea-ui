@@ -5,16 +5,26 @@ import React from 'react'
 import Alert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { createTheme } from '@material-ui/core/styles';
+import blue from '@material-ui/core/colors/blue';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
+import { ThemeProvider } from '@material-ui/styles';
 
 // Internal Imports
 import { getBundleModule, parseCardNFT } from '../../helpers';
 
 import './SelectCard.css';
+
+const darkTheme = createTheme({
+  palette: {
+    primary: blue,
+    type: 'dark',
+  },
+});
 
 const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
   // Get Card Metadata
@@ -113,45 +123,48 @@ const ColreaCard = ({cardNFT, setSelectedCard, setLocation }) => {
             </div>
           </div>
         </div>
-        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" background-color="#3d5afe">
-          <DialogTitle id="form-dialog-title">Transfer Contact Card</DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              id="name"
-              label="Wallet Address (0x123...)"
-              fullWidth
-              margin="dense"
-              onChange={event => setTransferAddress(event.target.value)}
-              variant="outlined"
-              type="text"
-            />
-            <TextField
-              autoFocus
-              fullWidth
-              margin="dense"
-              id="quantity"
-              label={`Quantity: ${card.balance}`}
-              onChange={event => setTransferAmount(event.target.value)}
-              type="number"
-              variant="outlined"
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
-            {
-              (transferStatus === "sending") ?
-              <CircularProgress /> : 
-              <Button onClick={transferCards} color="primary">
-              Transfer
+        <ThemeProvider theme={darkTheme}>
+          <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" background-color="#3d5afe">
+            <DialogTitle id="form-dialog-title">Transfer Contact Card</DialogTitle>
+            <DialogContent>
+              <TextField
+                autoFocus
+                id="name"
+                label="Wallet Address (0x123...)"
+                fullWidth
+                margin="dense"
+                onChange={event => setTransferAddress(event.target.value)}
+                variant="outlined"
+                type="text"
+              />
+              <TextField
+                autoFocus
+                defaultValue="1"
+                fullWidth
+                margin="dense"
+                id="quantity"
+                label={`Quantity: ${card.balance}`}
+                onChange={event => setTransferAmount(event.target.value)}
+                type="number"
+                variant="outlined"
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="secondary">
+                Cancel
               </Button>
-            }
-          </DialogActions>
-          { (transferStatus === "success") && <Alert onClose={handleClose} severity="success">Successfully sent contact cards!</Alert>}
-          { (transferStatus === "error") && <Alert onClose={handleClose} severity="error">{alertMessage}</Alert>}
-        </Dialog>
+              {
+                (transferStatus === "sending") ?
+                <CircularProgress /> : 
+                <Button onClick={transferCards} color="primary">
+                Transfer
+                </Button>
+              }
+            </DialogActions>
+            { (transferStatus === "success") && <Alert onClose={handleClose} severity="success">Successfully sent contact cards!</Alert>}
+            { (transferStatus === "error") && <Alert onClose={handleClose} severity="error">{alertMessage}</Alert>}
+          </Dialog>
+        </ThemeProvider>
       </div>
     )
 }
