@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-// Blockchain Imports 
-import { convertBalanceHexToInt, getBundleModule } from './helpers';
+// External Imports
 // import { ethers } from 'ethers';
+
+// Internal Imports 
+import { convertBalanceHexToInt, getBundleModule } from './helpers';
+import { networks } from './utils/networks';
 
 // Custom Components
 import LoadingIndicator from './components/LoadingIndicator';
 import MintCard from './components/MintCard';
 import ViewAllCards from './components/ViewAllCards';
 import ViewSelectedCard from './components/ViewSelectedCard';
+
+// Asset Imports
 
 // Constants
 import twitterLogo from './assets/twitter-logo.svg';
@@ -18,12 +23,53 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 function App() {
   // State
-  const [isCorrectNetwork, setIsCorrectNetwork] = useState(null);
-  const [currentAccount, setCurrentAccount] = useState(null);
-  const [location, setLocation] = useState(null);
   const [cardList, setCardList] = useState([]);
-  const [selectedCard, setSelectedCard] = useState([]);
+  const [currentAccount, setCurrentAccount] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [location, setLocation] = useState(null);
+  const [network, setNetwork] = useState('');
+  const [selectedCard, setSelectedCard] = useState([]);
+
+	const switchNetwork = async () => {
+		if (window.ethereum) {
+			try {
+				// Try to switch to the Mumbai testnet
+				await window.ethereum.request({
+					method: 'wallet_switchEthereumChain',
+					params: [{ chainId: '0x13881' }], // Check networks.js for hexadecimal network ids
+				});
+			} catch (error) {
+				// This error code means that the chain we want has not been added to MetaMask
+				// In this case we ask the user to add it to their MetaMask
+				if (error.code === 4902) {
+					try {
+						await window.ethereum.request({
+							method: 'wallet_addEthereumChain',
+							params: [
+								{	
+									chainId: '0x13881',
+									chainName: 'Polygon Mumbai Testnet',
+									rpcUrls: ['https://rpc-mumbai.maticvigil.com/'],
+									nativeCurrency: {
+											name: "Mumbai Matic",
+											symbol: "MATIC",
+											decimals: 18
+									},
+									blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
+								},
+							],
+						});
+					} catch (error) {
+						console.log(error);
+					}
+				}
+				console.log(error);
+			}
+		} else {
+			// If window.ethereum is not found then MetaMask is not installed
+			alert('MetaMask is not installed. Please install it to use this app: https://metamask.io/download.html');
+		} 
+	}
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -38,15 +84,8 @@ function App() {
         /*
          * Check if we are on the correct network verison
          */
-        const networkVersion = await ethereum.request({ method: 'eth_chainId' });
-        if (networkVersion === '0x13881') { // 0x89 is Matic Mainnet, 0x13881 is Mumbai Testnet
-          // console.log('Client connected to CORRECT Network Version: ' + networkVersion); // DEBUG
-          setIsCorrectNetwork(true);
-        } else {
-          // console.log('Client connected to INCORRECT Network Version: ' + networkVersion); // DEBUG
-          setIsCorrectNetwork(false);
-          setIsLoading(false);
-        }
+        const chainId = await ethereum.request({ method: 'eth_chainId' });
+        setNetwork(networks[chainId]);
 
         /*
          * Check if we're authorized to access the user's wallet
@@ -63,6 +102,12 @@ function App() {
         } else {
           // console.log('No authorized account found'); // DEBUG
           setIsLoading(false);
+        }
+
+        // Reload the page when they change network
+        ethereum.on('chainChanged', handleChainChanged);
+        function handleChainChanged(_chainId) {
+          window.location.reload();
         }
       }
     } catch (error) {
@@ -148,24 +193,9 @@ function App() {
     }  
 
     /*
-    * Scenario #0: Wrong Network Not Connected
+    * Scenario #0: Account Not Connected
     */
-    if (!isCorrectNetwork) {
-      return (
-        <div className="select-character-container">
-          <p className="sub-text">You are on the wrong network! Please connect to <b>Polygon</b> and refresh to continue.</p>
-          <img
-            src="https://mojo.dailybruin.com/wp-content/uploads/2014/06/kirito-gif-kirito-sword-art-online-34958972-500-281.gif"
-            alt="Sword Art Online Menu GIF"
-          />
-        </div>
-      );
-    }
-
-    /*
-    * Scenario #1: Account Not Connected
-    */
-    else if (!currentAccount) {
+    if (!currentAccount) {
       return (
         <div className="connect-wallet-container">
           <p className="sub-text">Mint your Metaverse ID Card!</p>
@@ -182,6 +212,25 @@ function App() {
         </div>
       );
     }
+
+    /*
+    * Scenario #1: Wrong Network Not Connected
+    */
+    else if (network === '0x13881') {
+      setIsLoading(false);
+      return (
+        <div className="select-character-container">
+          <p className="sub-text">You are on the wrong network! Please connect to <b>Polygon</b> and refresh to continue.</p>
+          <img
+            src="https://mojo.dailybruin.com/wp-content/uploads/2014/06/kirito-gif-kirito-sword-art-online-34958972-500-281.gif"
+            alt="Sword Art Online Menu GIF"
+          /> 
+          <br/><br/>
+          <button className='cta-button mint-button' onClick={switchNetwork}>Click here to switch to Polygon Network</button>
+        </div>
+      );
+    }
+
     /*
     * Scenario #2: View All Collected Contact Cards
     */
