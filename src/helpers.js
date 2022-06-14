@@ -10,6 +10,7 @@ import env from "react-dotenv";
 // Local Constants
 import { BUNDLE_MODULE_ADDRESS } from './constants';
 const walletPrivateKey = env.WALLET_PRIVATE_KEY;
+const apiKey = env.API_KEY;
 
 if (!walletPrivateKey) {
   console.error("Wallet private key missing")
@@ -19,10 +20,13 @@ if (!walletPrivateKey) {
 window.Buffer = window.Buffer || NodeBuffer;
 
 export async function getBundleModule() {
-  const provider = new ethers.Wallet(
-    env.WALLET_PRIVATE_KEY, // Wallet private key. NEVER CHECK THE KEY IN. ALWAYS USE ENVIRONMENT VARIABLES.
-    ethers.getDefaultProvider("https://winter-icy-sun.matic-testnet.quiknode.pro/f36aa318f8f806e4e15a58ab4a1b6cb9f9e9d9b9/")     // We use Polygon Mumbai network
-  )
+  // const provider = new ethers.Wallet(
+  //   env.WALLET_PRIVATE_KEY, // Wallet private key. NEVER CHECK THE KEY IN. ALWAYS USE ENVIRONMENT VARIABLES.
+  //   ethers.getDefaultProvider("https://winter-icy-sun.matic-testnet.quiknode.pro/f36aa318f8f806e4e15a58ab4a1b6cb9f9e9d9b9/")     // We use Polygon Mumbai network
+  // )
+  // const provider = ethers.Wallet.createRandom();
+  // const provider = ethers.providers.AlchemyProvider("matic", apiKey);
+  const provider = new ethers.providers.AlchemyProvider("maticmum", apiKey);
   const sdk = new ThirdwebSDK(provider);
   const module = await sdk.getBundleModule(BUNDLE_MODULE_ADDRESS);
   return module

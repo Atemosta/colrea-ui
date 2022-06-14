@@ -4,7 +4,14 @@ import React, { useEffect, useState } from "react";
 // import { ethers } from 'ethers';
 
 // Internal Imports
+import { convertBalanceHexToInt, getBundleModule } from './helpers';
 import { networks } from './utils/networks';
+
+// Internal Components
+import LoadingIndicator from './components/LoadingIndicator';
+import MintCard from './components/MintCard';
+import ViewAllCards from './components/ViewAllCards';
+import ViewSelectedCard from './components/ViewSelectedCard';
 
 // Asset Imports
 import './styles/App.css';
@@ -24,7 +31,7 @@ const App = () => {
 	const [editing, setEditing] = useState(false);
 	const [domain, setDomain] = useState('');
   const [loading, setLoading] = useState(false);
-	const [mints, setMints] = useState(["1","2"]);
+	const [mints, setMints] = useState([]);
 	const [network, setNetwork] = useState('');
   const [record, setRecord] = useState('');
 	
@@ -121,6 +128,38 @@ const App = () => {
 			window.location.reload();
 		}
 	};
+
+	const fetchMints = async () => {
+		setLoading(true)
+
+    try {
+      const module = await getBundleModule()
+			console.log(module);
+      const address = currentAccount; // The address you want to get the NFTs for;
+      console.log(address);
+			const ownedNfts = await module.getAll(address);
+			// console.log(ownedNfts);
+			// const allNFTs = await module.getAll(address);
+      const totalNFTs = ownedNfts.length
+			console.log(totalNFTs);
+      // const ownedNfts = []
+      // for (let i = 0; i < totalNFTs; i++) {
+      //   const currentNFT = allNFTs[i]
+      //   const ownedByAdressHex = currentNFT.ownedByAddress["_hex"]
+      //   const ownedByAddressInt = convertBalanceHexToInt(ownedByAdressHex)
+      //   if (ownedByAddressInt > 0){
+      //     ownedNfts.push(currentNFT)
+      //   }
+      // }        
+      // setMints(ownedNfts);
+      // setLocation("ViewAllCards")
+
+    } catch (error) {
+      console.log(error);
+    }
+
+		setLoading(false)
+	}
 
 	// Create a function to render if wallet is not connected yet
 	const renderNotConnectedContainer = () => (
@@ -230,6 +269,7 @@ const App = () => {
 			</div>);
 		}
 	};
+	
 
 	// This runs our function when the page loads.
 	useEffect(() => {
@@ -239,7 +279,7 @@ const App = () => {
 	// This will run any time currentAccount or network are changed
 	useEffect(() => {
 		if (network === CHAIN_NAME) {
-			// fetchMints();
+			fetchMints();
 		}
 	}, [currentAccount, network]);
 	
