@@ -16,16 +16,17 @@ import ethLogo from './assets/ethlogo.png';
 const TWITTER_HANDLE = 'Atemosta';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const CHAIN_NAME = 'Polygon Mumbai Testnet'
+const tld = '.aincrad';
 
 const App = () => {
 	// State 
 	const [currentAccount, setCurrentAccount] = useState('');
-	// const [editing, setEditing] = useState(false);
-	// const [domain, setDomain] = useState('');
-  // const [loading, setLoading] = useState(false);
-	// const [mints, setMints] = useState([]);
+	const [editing, setEditing] = useState(false);
+	const [domain, setDomain] = useState('');
+  const [loading, setLoading] = useState(false);
+	const [mints, setMints] = useState(["1","2"]);
 	const [network, setNetwork] = useState('');
-  // const [record, setRecord] = useState('');
+  const [record, setRecord] = useState('');
 	
 	const connectWallet = async () => {
 		try {
@@ -157,11 +158,78 @@ const App = () => {
 		}
 
 		return (
-			<div>
+			<div className="form-container">
+				<div className="first-row">
+					<input
+						type="text"
+						value={domain}
+						placeholder='domain'
+						onChange={e => setDomain(e.target.value)}
+					/>
+					<p className='tld'> {tld} </p>
+				</div>
+
+				<input
+					type="text"
+					value={record}
+					placeholder='whats ur ninja power'
+					onChange={e => setRecord(e.target.value)}
+				/>
+
+					{/* If the editing variable is true, return the "Set record" and "Cancel" button */}
+					{editing ? (
+						<div className="button-container">
+							{/* // This will call the updateDomain function we just made */}
+							<button className='cta-button mint-button' disabled={loading} onClick={() => console.log("updateDomain")}>
+								Set record
+							</button>  
+							{/* // This will let us get out of editing mode by setting editing to false */}
+							<button className='cta-button mint-button' onClick={() => {setEditing(false)}}>
+								Cancel
+							</button>  
+						</div>
+					) : (
+						// If editing is not true, the mint button will be returned instead
+						<button className='cta-button mint-button' disabled={loading} onClick={() => console.log("mintDomain")}>
+							Mint
+						</button>  
+					)}
 
 			</div>
 		);
 	}
+
+	// Add this render function next to your other render functions
+	const renderMints = () => {
+		if (currentAccount && mints.length > 0) {
+			return (
+				<div className="mint-container">
+					<p className="subtitle"> Recently minted domains!</p>
+					<div className="mint-list">
+						{ mints.map((mint, index) => {
+							return (
+								<div className="mint-item" key={index}>
+									<div className='mint-row'>
+										{/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
+										<a className="link" href={`https://testnets.opensea.io/`} target="_blank" rel="noopener noreferrer">
+											<p className="underlined">{' '}{mint.name}{tld}{' '}</p>
+										</a>
+										{/* If mint.owner is currentAccount, add an "edit" button*/}
+										{/* { mint.owner.toLowerCase() === currentAccount.toLowerCase() ?
+											<button className="edit-button" onClick={() => console.log("editRecord(mint.name)")}>
+												<img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
+											</button>
+											:
+											null
+										} */}
+									</div>
+						<p> {mint.record} </p>
+					</div>)
+					})}
+				</div>
+			</div>);
+		}
+	};
 
 	// This runs our function when the page loads.
 	useEffect(() => {
@@ -200,7 +268,7 @@ const App = () => {
 				{currentAccount && renderInputForm()}
 
 				{/* Render minted domains */}
-				{/* {mints && renderMints()} */}
+				{mints && renderMints()}
 
         <div className="footer-container">
 					<img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
