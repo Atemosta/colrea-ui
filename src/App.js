@@ -2,13 +2,16 @@ import React, { useEffect, useState } from "react";
 
 // External Imports
 // import { ethers } from 'ethers';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
 
 // Internal Imports
+import { BIO_MAX_LENGTH, NAME_MIN_LENGTH } from './constants';
 import { getEditionDropContract, parseRawNFT } from './helpers';
 import { networks } from './utils/networks';
 
 // Internal Components
-import LoadingIndicator from './components/LoadingIndicator';
+// import LoadingIndicator from './components/LoadingIndicator';
 // import MintCard from './components/MintCard';
 // import ViewAllCards from './components/ViewAllCards';
 // import ViewSelectedCard from './components/ViewSelectedCard';
@@ -18,23 +21,27 @@ import './styles/App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 import polygonLogo from './assets/polygonlogo.png';
 import ethLogo from './assets/ethlogo.png';
+import itemData from './components/MintCard/itemData';
 
 // Constants
 const TWITTER_HANDLE = 'Atemosta';
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const CHAIN_NAME = 'Polygon Mumbai Testnet'
-const tld = '.aincrad';
+// const tld = '.aincrad';
 
 const App = () => {
 	// State 
+	const [bio, setBio] = useState('');
 	const [currentAccount, setCurrentAccount] = useState('');
 	const [editing, setEditing] = useState(false);
-	const [domain, setDomain] = useState('');
   const [loading, setLoading] = useState(false);
+  const [img, setImg] = React.useState('');
+  const [title, setTitle] = React.useState('');
+	const [name, setName] = useState('');
 	const [mints, setMints] = useState([]);
 	const [network, setNetwork] = useState('');
-  const [record, setRecord] = useState('');
 	
+
 	const connectWallet = async () => {
 		try {
 			const { ethereum } = window;
@@ -78,7 +85,7 @@ const App = () => {
 									nativeCurrency: {
 											name: "Mumbai Matic",
 											symbol: "MATIC",
-											decimals: 18
+											decimals: 18,
 									},
 									blockExplorerUrls: ["https://mumbai.polygonscan.com/"]
 								},
@@ -103,7 +110,7 @@ const App = () => {
 			console.log('Make sure you have metamask!');
 			return;
 		} else {
-			console.log('We have the ethereum object', ethereum);
+			// console.log('We have the ethereum object', ethereum);
 		}
 
 		// Check if we're authorized to access the user's wallet
@@ -112,7 +119,7 @@ const App = () => {
 		// Users can have multiple authorized accounts, we grab the first one if its there!
 		if (accounts.length !== 0) {
 			const account = accounts[0];
-			console.log('Found an authorized account:', account);
+			// console.log('Found an authorized account:', account);
 			setCurrentAccount(account);
 		} else {
 			console.log('No authorized account found');
@@ -129,14 +136,73 @@ const App = () => {
 		}
 	};
 
+  const onImageClick = (img, title) => {
+    setImg(img)
+    setTitle(title)
+  }
+
+	const mintColrea = async () => {
+		// Don't run if image is not selected is empty
+		if (!img) { 
+			alert('Please select an image!');
+			return 
+		}
+		// Don't run if the name is empty
+		if (!name) { 
+			alert('Missing Name!');
+			return 
+		}
+		// Alert the user if the domain is too short
+		if (name.length < NAME_MIN_LENGTH) {
+			alert('Domain must be at least 3 characters long');
+			return;
+		}
+		// Alert the user if the bio is too long
+		if (bio.length > BIO_MAX_LENGTH) {
+			alert('Bio must be at most 35 characters');
+			return;
+		}
+		try {
+				console.log("Going to pop wallet now to pay gas...")
+				// // let tx = await contract.register(domain, {value: ethers.utils.parseEther(price)});
+				// // Wait for the transaction to be mined
+				// // const receipt = await tx.wait();
+				// const receipt = 1;
+	
+				// // Check if the transaction was successfully completed
+				// if (receipt.status === 1) {
+				// 	// console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
+					
+				// 	// Set the record for the domain
+				// 	// tx = contract.setRecord(domain, record);
+				// 	// await tx.wait();
+	
+				// 	// console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
+					
+				// // Call fetchMints after 2 seconds
+				// setTimeout(() => {
+				// 	fetchMints();
+				// }, 2000);
+
+				// 	setName('');
+				// 	setBio('');
+				// }
+				// else {
+				// 	alert("Transaction failed! Please try again");
+				// }
+			
+		}
+		catch(error){
+			console.log(error);
+		}
+	}
+
 	const fetchMints = async () => {
 		setLoading(true)
     try {
       const contract = getEditionDropContract()
-			console.log(contract);
       const address = currentAccount; // The address you want to get the NFTs for;
 			const nfts = await contract.getOwned(address);
-			console.log(nfts);
       setMints(nfts);
       // setLocation("ViewAllCards")
     } catch (error) {
@@ -182,40 +248,73 @@ const App = () => {
 
 		return (
 			<div className="form-container">
+				<p className="subtitle"> Mint New Colreas</p>
+
+				<p className="subtitle">Select Colrea Image</p>
+				<ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+					{itemData.map((item) => (
+						<ImageListItem 
+							key={item.img} 
+							onClick={() => onImageClick(item.ipfs, item.title)}
+							style= {{cursor: 'pointer' }}
+						>
+							<img
+								src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+								srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+								alt={item.title}
+								loading="lazy"
+							/>
+						</ImageListItem>
+					))}
+				</ImageList>
+
+
 				<div className="first-row">
 					<input
 						type="text"
-						value={domain}
-						placeholder='Name'
-						onChange={e => setDomain(e.target.value)}
+						disabled
+						value={title}
+						placeholder='Character Image'
+						onChange={e => setName(e.target.value)}
 					/>
 				</div>
 
-				<input
-					type="text"
-					value={record}
-					placeholder={"Bio"}
-					onChange={e => setRecord(e.target.value)}
-				/>
+				<div className="first-row">
+					<input
+						type="text"
+						value={name}
+						placeholder={"Name"}
+						onChange={e => setName(e.target.value)}
+					/>
+				</div>
 
-					{/* If the editing variable is true, return the "Set record" and "Cancel" button */}
-					{editing ? (
-						<div className="button-container">
-							{/* // This will call the updateDomain function we just made */}
-							<button className='cta-button mint-button' disabled={loading} onClick={() => console.log("updateDomain")}>
-								Set record
-							</button>  
-							{/* // This will let us get out of editing mode by setting editing to false */}
-							<button className='cta-button mint-button' onClick={() => {setEditing(false)}}>
-								Cancel
-							</button>  
-						</div>
-					) : (
-						// If editing is not true, the mint button will be returned instead
-						<button className='cta-button mint-button' disabled={loading} onClick={() => console.log("mintDomain")}>
-							Mint New Colrea
+				<div className="first-row">
+					<input
+						type="text"
+						value={bio}
+						placeholder={"Bio"}
+						onChange={e => setBio(e.target.value)}
+					/>
+				</div>
+
+				{/* If the editing variable is true, return the "Set record" and "Cancel" button */}
+				{editing ? (
+					<div className="button-container">
+						{/* // This will call the updateDomain function we just made */}
+						<button className='cta-button mint-button' disabled={loading} onClick={() => console.log("updateDomain")}>
+							Set record
 						</button>  
-					)}
+						{/* // This will let us get out of editing mode by setting editing to false */}
+						<button className='cta-button mint-button' onClick={() => {setEditing(false)}}>
+							Cancel
+						</button>  
+					</div>
+				) : (
+					// If editing is not true, the mint button will be returned instead
+					<button className='cta-button mint-button' disabled={loading} onClick={() => mintColrea()}>
+						Mint New Colrea
+					</button>  
+				)}
 
 			</div>
 		);
@@ -234,7 +333,7 @@ const App = () => {
 								<div className="mint-item" key={index}>
 									<div className='mint-row'>
 										{/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
-										<a className="link" href={`https://testnets.opensea.io/`} target="_blank" rel="noopener noreferrer">
+										<a className="link" href={`https://testnets.opensea.io/`} target="_blank" rel="noopener noreferrer"> 
 											<img 
 												src={nft.image} 
 												alt={nft.bio} 
@@ -252,9 +351,8 @@ const App = () => {
 											:
 											null
 										} */}
-									</div>
-						<p> {mint.record} </p>
-					</div>)
+								</div>
+						</div>)
 					})}
 				</div>
 			</div>);

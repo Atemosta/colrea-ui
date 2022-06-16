@@ -12,7 +12,6 @@ if (!walletPrivateKey) {
 }
 
 export function getEditionDropContract() {
-  console.log("wpk: " + walletPrivateKey )
   const sdk = ThirdwebSDK.fromPrivateKey(
     walletPrivateKey, // privateKey
     "mumbai" // network
