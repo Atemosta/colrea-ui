@@ -4,14 +4,14 @@ import React, { useEffect, useState } from "react";
 // import { ethers } from 'ethers';
 
 // Internal Imports
-import { convertBalanceHexToInt, getBundleModule } from './helpers';
+import { getEditionDropContract } from './helpers';
 import { networks } from './utils/networks';
 
 // Internal Components
 import LoadingIndicator from './components/LoadingIndicator';
-import MintCard from './components/MintCard';
-import ViewAllCards from './components/ViewAllCards';
-import ViewSelectedCard from './components/ViewSelectedCard';
+// import MintCard from './components/MintCard';
+// import ViewAllCards from './components/ViewAllCards';
+// import ViewSelectedCard from './components/ViewSelectedCard';
 
 // Asset Imports
 import './styles/App.css';
@@ -133,27 +133,13 @@ const App = () => {
 		setLoading(true)
 
     try {
-      const module = await getBundleModule()
-			console.log(module);
+      const contract = await getEditionDropContract()
+			console.log(contract);
       const address = currentAccount; // The address you want to get the NFTs for;
-      console.log(address);
-			const ownedNfts = await module.getAll(address);
-			// console.log(ownedNfts);
-			// const allNFTs = await module.getAll(address);
-      const totalNFTs = ownedNfts.length
-			console.log(totalNFTs);
-      // const ownedNfts = []
-      // for (let i = 0; i < totalNFTs; i++) {
-      //   const currentNFT = allNFTs[i]
-      //   const ownedByAdressHex = currentNFT.ownedByAddress["_hex"]
-      //   const ownedByAddressInt = convertBalanceHexToInt(ownedByAdressHex)
-      //   if (ownedByAddressInt > 0){
-      //     ownedNfts.push(currentNFT)
-      //   }
-      // }        
-      // setMints(ownedNfts);
+			const ownedNfts = await contract.getOwned(address);
+			console.log(ownedNfts);
+      setMints(ownedNfts);
       // setLocation("ViewAllCards")
-
     } catch (error) {
       console.log(error);
     }
