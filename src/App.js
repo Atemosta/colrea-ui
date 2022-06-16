@@ -131,19 +131,18 @@ const App = () => {
 
 	const fetchMints = async () => {
 		setLoading(true)
-
     try {
-      const contract = await getEditionDropContract()
+      const contract = getEditionDropContract()
 			console.log(contract);
       const address = currentAccount; // The address you want to get the NFTs for;
-			const ownedNfts = await contract.getOwned(address);
-			console.log(ownedNfts);
-      setMints(ownedNfts);
+			const nfts = await contract.getOwned(address);
+			console.log(nfts);
+			console.log(nfts.length);
+      setMints(nfts);
       // setLocation("ViewAllCards")
     } catch (error) {
       console.log(error);
     }
-
 		setLoading(false)
 	}
 

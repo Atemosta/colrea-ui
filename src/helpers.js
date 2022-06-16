@@ -11,8 +11,12 @@ if (!walletPrivateKey) {
   process.exit(1)
 }
 
-export async function getEditionDropContract() {
-  const sdk = new ThirdwebSDK("rinkeby");
+export function getEditionDropContract() {
+  console.log("wpk: " + walletPrivateKey )
+  const sdk = ThirdwebSDK.fromPrivateKey(
+    walletPrivateKey, // privateKey
+    "mumbai" // network
+  );  
   const contract = sdk.getEditionDrop(EDITION_DROP_ADDRESS);
   return contract; 
 };
