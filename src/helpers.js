@@ -1,7 +1,3 @@
-// Bypass
-// @ts-ignore
-import { Buffer as NodeBuffer } from 'buffer';
-
 // Library Imports
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import env from "react-dotenv";
@@ -14,9 +10,6 @@ if (!walletPrivateKey) {
   console.error("Wallet private key missing")
   process.exit(1)
 }
-
-window.Buffer = window.Buffer || NodeBuffer;
-
 
 export async function getEditionDropContract() {
   const sdk = new ThirdwebSDK("rinkeby");
