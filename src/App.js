@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 // import { ethers } from 'ethers';
 
 // Internal Imports
-import { getEditionDropContract } from './helpers';
+import { getEditionDropContract, parseRawNFT } from './helpers';
 import { networks } from './utils/networks';
 
 // Internal Components
@@ -137,7 +137,6 @@ const App = () => {
       const address = currentAccount; // The address you want to get the NFTs for;
 			const nfts = await contract.getOwned(address);
 			console.log(nfts);
-			console.log(nfts.length);
       setMints(nfts);
       // setLocation("ViewAllCards")
     } catch (error) {
@@ -231,12 +230,19 @@ const App = () => {
 					<p className="subtitle"> Recently minted domains!</p>
 					<div className="mint-list">
 						{ mints.map((mint, index) => {
+							const nft = parseRawNFT(mint);
 							return (
 								<div className="mint-item" key={index}>
 									<div className='mint-row'>
 										{/* <a className="link" href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${mint.id}`} target="_blank" rel="noopener noreferrer"> */}
 										<a className="link" href={`https://testnets.opensea.io/`} target="_blank" rel="noopener noreferrer">
-											<p className="underlined">{' '}{mint.name}{tld}{' '}</p>
+											<img 
+												src={nft.image} 
+												alt={nft.bio} 
+												width="125" 
+												height="125"
+											/>
+											<p className="underlined">{' '}{nft.name}{tld}{' '}</p>
 										</a>
 										{/* If mint.owner is currentAccount, add an "edit" button*/}
 										{/* { mint.owner.toLowerCase() === currentAccount.toLowerCase() ?

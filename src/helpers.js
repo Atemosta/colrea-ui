@@ -26,17 +26,17 @@ export function convertBalanceHexToInt(hexNumber) {
   return balanceInt
 }
 
-export function parseCardNFT(cardNFT) {
-  const metadata = cardNFT.metadata
-  const card = {
-    balance: convertBalanceHexToInt(cardNFT.ownedByAddress["_hex"]),
+export function parseRawNFT(nftRaw) {
+  const metadata = nftRaw.metadata
+  const nft = {
+    balance: convertBalanceHexToInt(nftRaw.quantityOwned["_hex"]),
     bio: metadata.description,
     image: metadata.image,
     id: metadata.id,
     name: metadata.name, 
     properties: metadata.properties
   }
-  return card
+  return nft;
 }
 
 export function checkIfPropertyExists(name, properties) {
