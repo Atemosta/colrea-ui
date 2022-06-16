@@ -186,16 +186,15 @@ const App = () => {
 					<input
 						type="text"
 						value={domain}
-						placeholder='domain'
+						placeholder='Name'
 						onChange={e => setDomain(e.target.value)}
 					/>
-					<p className='tld'> {tld} </p>
 				</div>
 
 				<input
 					type="text"
 					value={record}
-					placeholder='whats ur ninja power'
+					placeholder={"Bio"}
 					onChange={e => setRecord(e.target.value)}
 				/>
 
@@ -214,7 +213,7 @@ const App = () => {
 					) : (
 						// If editing is not true, the mint button will be returned instead
 						<button className='cta-button mint-button' disabled={loading} onClick={() => console.log("mintDomain")}>
-							Mint
+							Mint New Colrea
 						</button>  
 					)}
 
@@ -227,7 +226,7 @@ const App = () => {
 		if (currentAccount && mints.length > 0) {
 			return (
 				<div className="mint-container">
-					<p className="subtitle"> Recently minted domains!</p>
+					<p className="subtitle"> Your Collected Colreas!</p>
 					<div className="mint-list">
 						{ mints.map((mint, index) => {
 							const nft = parseRawNFT(mint);
@@ -242,7 +241,8 @@ const App = () => {
 												width="125" 
 												height="125"
 											/>
-											<p className="underlined">{' '}{nft.name}{tld}{' '}</p>
+											<p className="colrea-card-name">{' '}{nft.name}{' '}</p>
+											<p className="colrea-card-bio">{' '}{nft.bio}{' '}</p>
 										</a>
 										{/* If mint.owner is currentAccount, add an "edit" button*/}
 										{/* { mint.owner.toLowerCase() === currentAccount.toLowerCase() ?

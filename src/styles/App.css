@@ -84,6 +84,17 @@ header{
   color: white;
 }
 
+.colrea-card-name {
+  font-size: 24px;
+  max-width: 200px;
+  text-decoration: underline;
+}
+
+.colrea-card-bio {
+  font-size: 18px;
+  max-width: 200px;
+}
+
 .connect-wallet-container {
   display: flex;
   flex-direction: column;
