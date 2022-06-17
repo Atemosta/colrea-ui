@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
 
 // External Imports
-// import { ethers } from 'ethers';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
 // Internal Imports
-import { BIO_MAX_LENGTH, NAME_MIN_LENGTH } from './constants';
-import { getEditionDropContract, parseRawNFT } from './helpers';
+import { BIO_MAX_LENGTH, NAME_MIN_LENGTH, NAME_MAX_LENGTH } from './constants';
+import { getEditionContract, parseRawNFT } from './helpers';
 import { networks } from './utils/networks';
-
-// Internal Components
-// import LoadingIndicator from './components/LoadingIndicator';
-// import MintCard from './components/MintCard';
-// import ViewAllCards from './components/ViewAllCards';
-// import ViewSelectedCard from './components/ViewSelectedCard';
 
 // Asset Imports
 import './styles/App.css';
@@ -31,17 +24,15 @@ const CHAIN_NAME = 'Polygon Mumbai Testnet'
 
 const App = () => {
 	// State 
-	const [bio, setBio] = useState('');
 	const [currentAccount, setCurrentAccount] = useState('');
-	const [editing, setEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [img, setImg] = React.useState('');
-  const [title, setTitle] = React.useState('');
-	const [name, setName] = useState('');
+	const [mintBio, setMintBio] = useState('');
+	const [mintName, setMintName] = useState('');
+  const [mintImg, setMintImg] = React.useState('');
+  const [mintTitle, setMintTitle] = React.useState('');
 	const [mints, setMints] = useState([]);
 	const [network, setNetwork] = useState('');
-	
-
+	// Connect Wallet
 	const connectWallet = async () => {
 		try {
 			const { ethereum } = window;
@@ -61,7 +52,7 @@ const App = () => {
 			console.log(error)
 		}
 	}
-
+	// Switch Network
 	const switchNetwork = async () => {
 		if (window.ethereum) {
 			try {
@@ -102,7 +93,7 @@ const App = () => {
 			alert('MetaMask is not installed. Please install it to use this app: https://metamask.io/download.html');
 		} 
 	}
-
+	// Check if Wallet is Connected
 	const checkIfWalletIsConnected = async () => {
 		const { ethereum } = window;
 
@@ -135,82 +126,100 @@ const App = () => {
 			window.location.reload();
 		}
 	};
-
+	// On Image Click
   const onImageClick = (img, title) => {
-    setImg(img)
-    setTitle(title)
+    setMintImg(img)
+    setMintTitle(title)
   }
-
+	// Mint Colrea
 	const mintColrea = async () => {
 		// Don't run if image is not selected is empty
-		if (!img) { 
+		if (!mintImg) { 
 			alert('Please select an image!');
 			return 
 		}
 		// Don't run if the name is empty
-		if (!name) { 
+		if (!mintName) { 
 			alert('Missing Name!');
 			return 
 		}
-		// Alert the user if the domain is too short
-		if (name.length < NAME_MIN_LENGTH) {
-			alert('Domain must be at least 3 characters long');
+		// Alert the user if the name is too short
+		if (mintName.length < NAME_MIN_LENGTH) {
+			alert('Name must be at least 3 characters long');
+			return;
+		}
+		// Alert the user if the name is too short
+		if (mintName.length > NAME_MAX_LENGTH) {
+			alert('Name must be at most 25 characters long');
 			return;
 		}
 		// Alert the user if the bio is too long
-		if (bio.length > BIO_MAX_LENGTH) {
+		if (mintBio.length > BIO_MAX_LENGTH) {
 			alert('Bio must be at most 35 characters');
 			return;
 		}
+		setLoading(true);
 		try {
-				console.log("Going to pop wallet now to pay gas...")
-				// // let tx = await contract.register(domain, {value: ethers.utils.parseEther(price)});
-				// // Wait for the transaction to be mined
-				// // const receipt = await tx.wait();
-				// const receipt = 1;
-	
-				// // Check if the transaction was successfully completed
-				// if (receipt.status === 1) {
-				// 	// console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
-					
-				// 	// Set the record for the domain
-				// 	// tx = contract.setRecord(domain, record);
-				// 	// await tx.wait();
-	
-				// 	// console.log("Record set! https://mumbai.polygonscan.com/tx/"+tx.hash);
-					
-				// // Call fetchMints after 2 seconds
-				// setTimeout(() => {
-				// 	fetchMints();
-				// }, 2000);
-
-				// 	setName('');
-				// 	setBio('');
-				// }
-				// else {
-				// 	alert("Transaction failed! Please try again");
-				// }
-			
+			// Address of the wallet you want to mint the NFT to
+			const toAddress = currentAccount;
+			// Custom metadata of the NFT, note that you can fully customize this metadata with other properties.
+			const metadata = {
+				name: mintName,
+				description: mintBio,
+				image: mintImg // This can be an image url or file
+			}
+			const metadataWithSupply = {
+				metadata,
+				supply: 100, // The number of this NFT you want to mint
+			}
+			console.log("Attempting to mint new Colrea...")
+			const contract = getEditionContract();
+			let tx = await contract.mintTo(toAddress, metadataWithSupply);
+			console.log("tx: ");
+			console.log(tx)
+			// Wait for the transaction to be mined
+			const receipt = tx.receipt; // the transaction receipt
+			console.log("receipt:");
+			console.log(receipt)
+			const tokenId = tx.id; 
+			console.log("tokenId: " + tokenId)// the id of the NFT minted
+			const nft = await tx.data(); // (optional) fetch details of minted NFT
+			console.log("nft: ");
+			console.log(nft)
+			// Check if the transaction was successfully completed
+			if (receipt.status === 1) {
+				console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
+				// Call fetchMints after 2 seconds
+				setTimeout(() => {
+					fetchMints();
+				}, 2000);
+				setMintName('');
+				setMintBio('');
+				setMintImg('');
+				setMintTitle('');
+			}
+			else {
+				alert("Transaction failed! Please try again");
+			}
 		}
 		catch(error){
 			console.log(error);
 		}
+		setLoading(false)
 	}
-
+	// Fetch Mints
 	const fetchMints = async () => {
 		setLoading(true)
     try {
-      const contract = getEditionDropContract()
+      const contract = getEditionContract()
       const address = currentAccount; // The address you want to get the NFTs for;
 			const nfts = await contract.getOwned(address);
       setMints(nfts);
-      // setLocation("ViewAllCards")
     } catch (error) {
       console.log(error);
     }
 		setLoading(false)
 	}
-
 	// Create a function to render if wallet is not connected yet
 	const renderNotConnectedContainer = () => (
     <div className="connect-wallet-container">
@@ -228,7 +237,6 @@ const App = () => {
       </button>
     </div>
   );
-
 	// Form to enter domain name and data
 	const renderInputForm = () => {
 		// If not on Polygon Mumbai Testnet, render "Please connect to Polygon Mumbai Testnet"
@@ -245,12 +253,9 @@ const App = () => {
 				</div>
 			);
 		}
-
 		return (
 			<div className="form-container">
-				<p className="subtitle"> Mint New Colreas</p>
-
-				<p className="subtitle">Select Colrea Image</p>
+				{/* Image List */}
 				<ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
 					{itemData.map((item) => (
 						<ImageListItem 
@@ -267,65 +272,46 @@ const App = () => {
 						</ImageListItem>
 					))}
 				</ImageList>
-
-
+				{/* Input Form (Image) */}
 				<div className="first-row">
 					<input
 						type="text"
 						disabled
-						value={title}
-						placeholder='Character Image'
-						onChange={e => setName(e.target.value)}
+						value={mintTitle}
+						placeholder='Select Character Image'
+						onChange={e => setMintTitle(e.target.value)}
 					/>
 				</div>
-
+				{/* Input Form (Name) */}
 				<div className="first-row">
 					<input
 						type="text"
-						value={name}
+						value={mintName}
 						placeholder={"Name"}
-						onChange={e => setName(e.target.value)}
+						onChange={e => setMintName(e.target.value)}
 					/>
 				</div>
-
-				<div className="first-row">
+				{/* Input Form (Bio) */}
 					<input
 						type="text"
-						value={bio}
+						value={mintBio}
 						placeholder={"Bio"}
-						onChange={e => setBio(e.target.value)}
+						onChange={e => setMintBio(e.target.value)}
 					/>
-				</div>
-
-				{/* If the editing variable is true, return the "Set record" and "Cancel" button */}
-				{editing ? (
-					<div className="button-container">
-						{/* // This will call the updateDomain function we just made */}
-						<button className='cta-button mint-button' disabled={loading} onClick={() => console.log("updateDomain")}>
-							Set record
-						</button>  
-						{/* // This will let us get out of editing mode by setting editing to false */}
-						<button className='cta-button mint-button' onClick={() => {setEditing(false)}}>
-							Cancel
-						</button>  
-					</div>
-				) : (
-					// If editing is not true, the mint button will be returned instead
-					<button className='cta-button mint-button' disabled={loading} onClick={() => mintColrea()}>
-						Mint New Colrea
-					</button>  
-				)}
-
+				{/* Mint Button */}
+				<button className='cta-button mint-button' disabled={loading} onClick={() => mintColrea()}>
+					Mint New Colrea
+				</button>  
 			</div>
 		);
 	}
-
 	// Add this render function next to your other render functions
 	const renderMints = () => {
 		if (currentAccount && mints.length > 0) {
 			return (
 				<div className="mint-container">
 					<p className="subtitle"> Your Collected Colreas!</p>
+					<p className="subtitle"> Click on a Colrea to transfer it to a friend</p>
 					<div className="mint-list">
 						{ mints.map((mint, index) => {
 							const nft = parseRawNFT(mint);
@@ -340,38 +326,26 @@ const App = () => {
 												width="125" 
 												height="125"
 											/>
-											<p className="colrea-card-name">{' '}{nft.name}{' '}</p>
+											<p className="colrea-card-name">{' '}{nft.name}{' (x' + nft.balance + ')'}</p>
 											<p className="colrea-card-bio">{' '}{nft.bio}{' '}</p>
 										</a>
-										{/* If mint.owner is currentAccount, add an "edit" button*/}
-										{/* { mint.owner.toLowerCase() === currentAccount.toLowerCase() ?
-											<button className="edit-button" onClick={() => console.log("editRecord(mint.name)")}>
-												<img className="edit-icon" src="https://img.icons8.com/metro/26/000000/pencil.png" alt="Edit button" />
-											</button>
-											:
-											null
-										} */}
-								</div>
-						</div>)
-					})}
-				</div>
+									</div>
+								</div>)
+						})}
+					</div>
 			</div>);
 		}
 	};
-	
-
 	// This runs our function when the page loads.
 	useEffect(() => {
 		checkIfWalletIsConnected();
 	}, [])
-
 	// This will run any time currentAccount or network are changed
 	useEffect(() => {
 		if (network === CHAIN_NAME) {
 			fetchMints();
 		}
 	}, [currentAccount, network]);
-	
   return (
 		<div className="App">
 			<div className="container">

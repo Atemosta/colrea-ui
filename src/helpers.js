@@ -3,7 +3,7 @@ import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import env from "react-dotenv";
 
 // Local Constants
-import { EDITION_DROP_ADDRESS } from './constants';
+import { CONTRACT_EDITION_ADDRESS } from './constants';
 const walletPrivateKey = env.WALLET_PRIVATE_KEY;
 
 if (!walletPrivateKey) {
@@ -11,12 +11,12 @@ if (!walletPrivateKey) {
   process.exit(1)
 }
 
-export function getEditionDropContract() {
+export function getEditionContract() {
   const sdk = ThirdwebSDK.fromPrivateKey(
     walletPrivateKey, // privateKey
     "mumbai" // network
   );  
-  const contract = sdk.getEditionDrop(EDITION_DROP_ADDRESS);
+  const contract = sdk.getEdition(CONTRACT_EDITION_ADDRESS);
   return contract; 
 };
 
