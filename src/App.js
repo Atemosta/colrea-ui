@@ -179,16 +179,9 @@ const App = () => {
 			console.log(tx)
 			// Wait for the transaction to be mined
 			const receipt = tx.receipt; // the transaction receipt
-			console.log("receipt:");
-			console.log(receipt)
-			const tokenId = tx.id; 
-			console.log("tokenId: " + tokenId)// the id of the NFT minted
-			const nft = await tx.data(); // (optional) fetch details of minted NFT
-			console.log("nft: ");
-			console.log(nft)
 			// Check if the transaction was successfully completed
 			if (receipt.status === 1) {
-				console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+tx.hash);
+				console.log("Domain minted! https://mumbai.polygonscan.com/tx/"+ receipt.transactionHash);
 				// Call fetchMints after 2 seconds
 				setTimeout(() => {
 					fetchMints();
